@@ -13,10 +13,14 @@ public class GlobalExceptionHandler {
         HttpStatus status =  switch (exception.getErrorCode()){
             case INVALID_REQUEST -> HttpStatus.BAD_REQUEST;
             case DUPLICATE_EMAIL -> HttpStatus.CONFLICT;
-            case USER_NOT_FOUND -> HttpStatus.NOT_FOUND;
+            case USER_NOT_FOUND, ACCOUNT_NOT_FOUND -> HttpStatus.NOT_FOUND;
         };
 
-        ErrorResponse errorResponse = new ErrorResponse(false, exception.getErrorCode(), exception.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(
+                false,
+                exception.getErrorCode(),
+                exception.getMessage()
+        );
 
         return ResponseEntity.status(status).body(errorResponse);
     }
