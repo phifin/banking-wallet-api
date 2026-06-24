@@ -107,4 +107,12 @@ public class UserService {
                 user.getCreatedAt()
         );
     }
+
+    public boolean existsById(Long id) {
+        if (id == null) {
+            return false;
+        }
+
+        return users.containsKey(id);
+    }
 }

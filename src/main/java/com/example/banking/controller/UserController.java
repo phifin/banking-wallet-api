@@ -4,7 +4,12 @@ import com.example.banking.dto.request.CreateUserRequest;
 import com.example.banking.dto.response.ApiResponse;
 import com.example.banking.dto.response.UserResponse;
 import com.example.banking.service.UserService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -20,13 +25,13 @@ public class UserController {
     @GetMapping
     public ApiResponse<List<UserResponse>> getUsersList() {
         List<UserResponse> users = userService.getUsers();
-        return new ApiResponse<List<UserResponse>>(true, "Get users list succesfully",users);
+        return new ApiResponse<List<UserResponse>>(true, "Users retrieved successfully", users);
     }
 
-    @GetMapping("/{id}")
-    public ApiResponse<UserResponse> getUserById(@PathVariable Long id) {
+    @GetMapping("/{userId}")
+    public ApiResponse<UserResponse> getUserById(@PathVariable("userId") Long id) {
         UserResponse user = userService.getUserById(id);
-        return new ApiResponse<UserResponse>(true, "Get user successfully",user);
+        return new ApiResponse<UserResponse>(true, "User retrieved successfully", user);
     }
 
     @PostMapping
