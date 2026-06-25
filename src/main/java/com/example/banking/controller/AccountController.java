@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -34,9 +35,13 @@ public class AccountController {
     }
 
     @GetMapping
-    public ApiResponse<List<AccountResponse>> getAccounts() {
-        List<AccountResponse> accountsList = accountService.getAccounts();
-
+    public ApiResponse<List<AccountResponse>> getAccounts(@RequestParam(required = false, name = "userId") Long userId) {
+        List<AccountResponse> accountsList;
+        if (userId == null) {
+            accountsList = accountService.getAccounts();
+        } else {
+            accountsList = accountService.getAccountsByUserId(userId);
+        }
         return new ApiResponse<>(
                 true,
                 "Accounts retrieved successfully",

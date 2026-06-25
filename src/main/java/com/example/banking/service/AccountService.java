@@ -81,6 +81,26 @@ public class AccountService {
         return accountsResponse;
     }
 
+    public List<AccountResponse> getAccountsByUserId(Long userId) {
+        if (userId == null) {
+            throw new BusinessException(ErrorCode.INVALID_REQUEST, "User ID is required");
+        }
+
+        if (!userService.existsById(userId)) {
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND, "User not found");
+        }
+
+        List<AccountResponse> result = new ArrayList<>();
+
+        for (Account account : accounts.values()) {
+            if (account.getUserId().equals(userId)) {
+                result.add(toAccountResponse(account));
+            }
+        }
+
+        return result;
+    }
+
     private AccountResponse toAccountResponse(Account account) {
         return new AccountResponse(
                 account.getId(),
