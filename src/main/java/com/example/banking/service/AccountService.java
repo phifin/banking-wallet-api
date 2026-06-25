@@ -116,6 +116,18 @@ public class AccountService {
         account.setBalance(newBalance);
     }
 
+    public void decreaseBalance(Long accountId, BigDecimal amount) {
+        Account account = getAccountModelById(accountId);
+
+        if (account.getBalance().compareTo(amount) < 0) {
+            throw new BusinessException(ErrorCode.INSUFFICIENT_BALANCE, "Insufficient balance for withdrawal");
+        }
+
+        BigDecimal newBalance = account.getBalance().subtract(amount);
+
+        account.setBalance(newBalance);
+    }
+
     private AccountResponse toAccountResponse(Account account) {
         return new AccountResponse(
                 account.getId(),

@@ -12,7 +12,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException exception){
         HttpStatus status =  switch (exception.getErrorCode()){
             case INVALID_REQUEST -> HttpStatus.BAD_REQUEST;
-            case DUPLICATE_EMAIL, ACCOUNT_NOT_ACTIVE -> HttpStatus.CONFLICT;
+            case DUPLICATE_EMAIL, ACCOUNT_NOT_ACTIVE, INSUFFICIENT_BALANCE -> HttpStatus.CONFLICT;
             case USER_NOT_FOUND, ACCOUNT_NOT_FOUND -> HttpStatus.NOT_FOUND;
         };
 

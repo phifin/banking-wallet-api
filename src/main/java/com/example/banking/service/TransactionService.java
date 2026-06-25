@@ -1,6 +1,7 @@
 package com.example.banking.service;
 
 import com.example.banking.dto.request.DepositRequest;
+import com.example.banking.dto.request.WithdrawRequest;
 import com.example.banking.dto.response.TransactionResponse;
 import com.example.banking.exception.BusinessException;
 import com.example.banking.exception.ErrorCode;
@@ -48,7 +49,7 @@ public class TransactionService {
             throw new BusinessException(ErrorCode.ACCOUNT_NOT_ACTIVE, "Account is not active");
         }
 
-        accountService.increaseBalance(request.getAccountId(), request.getAmount());
+        accountService.increaseBalance(account.getId(), request.getAmount());
         Long id = nextId;
         nextId++;
 
@@ -57,6 +58,48 @@ public class TransactionService {
                 TransactionType.DEPOSIT,
                 null,
                 account.getId(),
+                request.getAmount(),
+                Instant.now()
+        );
+
+        transactions.put(id, transaction);
+
+        return toTransactionResponse(transaction);
+    }
+
+    public TransactionResponse withdraw(WithdrawRequest request) {
+        if (request == null) {
+            throw new BusinessException(ErrorCode.INVALID_REQUEST, "Request body is required");
+        }
+
+        if (request.getAccountId() == null) {
+            throw new BusinessException(ErrorCode.INVALID_REQUEST, "Account ID is required");
+        }
+
+        if (request.getAmount() == null) {
+            throw new BusinessException(ErrorCode.INVALID_REQUEST, "Amount is required");
+        }
+
+        if (request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BusinessException(ErrorCode.INVALID_REQUEST, "Amount must be greater than zero");
+        }
+
+        Account account = accountService.getAccountModelById(request.getAccountId());
+
+        if (account.getStatus() != AccountStatus.ACTIVE) {
+            throw new BusinessException(ErrorCode.ACCOUNT_NOT_ACTIVE, "Account is not active");
+        }
+
+        accountService.decreaseBalance(account.getId(), request.getAmount());
+
+        Long id = nextId;
+        nextId++;
+
+        Transaction transaction = new Transaction(
+                id,
+                TransactionType.WITHDRAW,
+                account.getId(),
+                null,
                 request.getAmount(),
                 Instant.now()
         );
