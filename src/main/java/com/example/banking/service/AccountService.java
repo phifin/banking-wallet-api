@@ -60,16 +60,9 @@ public class AccountService {
     }
 
     public AccountResponse getAccountById(Long id) {
-        if (id == null) {
-            throw new BusinessException(ErrorCode.INVALID_REQUEST, "Account ID is required");
-        }
+        Account account = getAccountModelById(id);
 
-        Account foundAccount = accounts.get(id);
-        if (foundAccount == null) {
-            throw new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND, "Account not found");
-        }
-
-        return toAccountResponse(foundAccount);
+        return toAccountResponse(account);
     }
 
     public List<AccountResponse> getAccounts() {
@@ -99,6 +92,28 @@ public class AccountService {
         }
 
         return result;
+    }
+
+    public Account getAccountModelById(Long id) {
+        if (id == null) {
+            throw new BusinessException(ErrorCode.INVALID_REQUEST, "Account ID is required");
+        }
+
+        Account account = accounts.get(id);
+
+        if (account == null) {
+            throw new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND, "Account not found");
+        }
+
+        return account;
+    }
+
+    public void increaseBalance(Long accountId, BigDecimal amount) {
+        Account account = getAccountModelById(accountId);
+
+        BigDecimal newBalance = account.getBalance().add(amount);
+
+        account.setBalance(newBalance);
     }
 
     private AccountResponse toAccountResponse(Account account) {
